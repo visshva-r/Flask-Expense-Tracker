@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Welcome, {{ current_user.username }}</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-md-3">{{ form.amount.label }} {{ form.amount(class="form-control") }}</div>
+        <div class="col-md-3">{{ form.category.label }} {{ form.category(class="form-control") }}</div>
+        <div class="col-md-3 mt-4">{{ form.submit(class="btn btn-success") }}</div>
+    </div>
+</form>
+
+<h3 class="mt-4">Your Expenses</h3>
+<table class="table table-striped">
+    <tr><th>Amount</th><th>Category</th><th>Date</th></tr>
+    {% for exp in expenses %}
+    <tr><td>${{ exp.amount }}</td><td>{{ exp.category }}</td><td>{{ exp.date.strftime('%Y-%m-%d') }}</td></tr>
+    {% endfor %}
+</table>
+
+<h3 class="mt-4">Visualization</h3>
+<img src="{{ url_for('static', filename='chart.png') }}?v={{ range(1, 100000) | random }}" alt="Expense Chart" class="img-fluid"/>
+
+<a href="{{ url_for('main.logout') }}" class="btn btn-danger mt-3">Logout</a>
+<a href="{{ url_for('main.export_csv') }}" class="btn btn-success">Export to CSV</a>
+{% endblock %}
