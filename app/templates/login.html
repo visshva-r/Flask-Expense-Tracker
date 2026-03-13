@@ -1,11 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">{{ form.username.label }} {{ form.username(class="form-control") }}</div>
-    <div class="mb-3">{{ form.password.label }} {{ form.password(class="form-control") }}</div>
-    {{ form.submit(class="btn btn-primary") }}
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <h2 class="mb-3">Log in</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.username.label }}
+                {{ form.username(class="form-control", placeholder="Your username") }}
+                {% for error in form.username.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label }}
+                {{ form.password(class="form-control", placeholder="Your password") }}
+                {% for error in form.password.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            {{ form.submit(class="btn btn-primary w-100") }}
+        </form>
+
+        <p class="mt-3 small">
+            New here?
+            <a href="{{ url_for('main.register') }}">Create an account</a>.
+        </p>
+    </div>
+</div>
 {% endblock %}

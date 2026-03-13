@@ -35,11 +35,16 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        existing = User.query.filter_by(username=form.username.data).first()
+        if existing:
+            flash('Username is already taken. Please choose a different one.')
+            return render_template('register.html', form=form)
+
         hashed_pw = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         user = User(username=form.username.data, password=hashed_pw)
         db.session.add(user)
         db.session.commit()
-        flash('Account created!')
+        flash('Account created! You can now log in.')
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
 
@@ -51,11 +56,36 @@ def dashboard():
         expense = Expense(amount=form.amount.data, category=form.category.data, owner=current_user)
         db.session.add(expense)
         db.session.commit()
+        flash('Expense added.')
         return redirect(url_for('main.dashboard'))
 
-    expenses = Expense.query.filter_by(user_id=current_user.id).all()
+    expenses = Expense.query.filter_by(user_id=current_user.id).order_by(Expense.date.desc()).all()
     generate_chart(expenses)
     return render_template('dashboard.html', form=form, expenses=expenses)
+
+
+@main.route('/expense/<int:expense_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_expense(expense_id):
+    expense = Expense.query.filter_by(id=expense_id, user_id=current_user.id).first_or_404()
+    form = ExpenseForm(obj=expense)
+    if form.validate_on_submit():
+        expense.amount = form.amount.data
+        expense.category = form.category.data
+        db.session.commit()
+        flash('Expense updated.')
+        return redirect(url_for('main.dashboard'))
+    return render_template('edit_expense.html', form=form, expense=expense)
+
+
+@main.route('/expense/<int:expense_id>/delete', methods=['POST'])
+@login_required
+def delete_expense(expense_id):
+    expense = Expense.query.filter_by(id=expense_id, user_id=current_user.id).first_or_404()
+    db.session.delete(expense)
+    db.session.commit()
+    flash('Expense deleted.')
+    return redirect(url_for('main.dashboard'))
 
 @main.route('/logout')
 @login_required
