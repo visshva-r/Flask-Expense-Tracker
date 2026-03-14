@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from .models import User, Expense
 from .forms import LoginForm, RegisterForm, ExpenseForm
 from . import db
@@ -99,9 +99,8 @@ def generate_chart(expenses):
         categories[exp.category] = categories.get(exp.category, 0) + exp.amount
 
     plt.clf()
-    path = os.path.join('app', 'static', 'chart.png')
-    
-    # FIX 3: Auto-create the static directory so you never get a FileNotFoundError
+    # Use Flask app's static folder so the chart is served correctly
+    path = os.path.join(current_app.root_path, 'static', 'chart.png')
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     # FIX 2: Prevent the app from crashing if a new user has 0 expenses

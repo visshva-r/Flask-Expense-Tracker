@@ -44,3 +44,17 @@ A full-stack web application built with Python and Flask designed to help users 
    ```
 
 6. Open your browser and navigate to `http://127.0.0.1:5000/`.
+
+## Testing
+
+From the project root, run the full route and page tests:
+
+```bash
+python tests/test_routes.py
+```
+
+This checks every page (index, login, register, dashboard, add/edit/delete expense, export CSV, logout) and verifies redirects and 404 handling.
+
+## Live Demo
+
+[flask-expense-tracker-e5tn.onrender.com](https://flask-expense-tracker-e5tn.onrender.com)

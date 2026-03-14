@@ -59,6 +59,9 @@
                                           action="{{ url_for('main.delete_expense', expense_id=exp.id) }}"
                                           style="display:inline-block"
                                           onsubmit="return confirm('Delete this expense?');">
+                                        {% if config.WTF_CSRF_ENABLED %}
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        {% endif %}
                                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </td>
